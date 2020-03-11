@@ -5,7 +5,12 @@
     @keyup.enter="addTodo">
 
     
-      <todo-item v-for="todo in todos" :key="todo.id" :todo="todo"  @removedTodo="removeTodo" @finishedEdit="finishedEdit"></todo-item>
+      <todo-item v-for="todo in todos" 
+      :key="todo.id" :todo="todo" 
+      @removedTodo="removeTodo" 
+      @finishedEdit="finishedEdit"
+      ></todo-item>
+    
        
     
 </div>
@@ -22,21 +27,12 @@ export default {
      return {
         newTodo: "",
         beforeEditCache: "",
-        todos: [
-            {
-                'id': 1,
-                'title': 'finnish vue project',
-                'completed': false,
-                'editing': false 
-            },
-            {
-                'id': 2,
-                'title': 'Take over world',
-                'completed': false,
-                'editing': false,
-            },
-        ]
+       
      }
+ }, computed: {
+   todos() {
+     return this.$store.state.todos
+   }
  },
 
  methods:{
@@ -44,12 +40,7 @@ export default {
          if(this.newTodo.trim().length == 0){
              return 
          }
-                 this.todos.push({
-                     id: Date.now(),
-                     title: this.newTodo,
-                     completed:false,
-        
-                 }),
+                 this.$store.commit('addTodo', this.newTodo)
                  
                  this.newTodo =''
                  this.idFortodo++;
@@ -57,30 +48,26 @@ export default {
      },
   
      removeTodo(id){
-        const index = this.todos.findIndex((item) => item.id == id)
-         this.todos.splice(index, 1)
+        this.$store.commit('removeTodo', id)
      },
      
      finishedEdit(data) {
-      const index = this.todos.findIndex((item) => item.id == data.id)
-      this.todos.splice(index, 1, data)
+     this.$store.commit('finishedEdit', data)
     },
   
  },
   mounted() {
-    console.log('App mounted!');
-    if (localStorage.getItem('todos')) this.todos = JSON.parse(localStorage.getItem('todos'));
+   this.$store.commit('localStorage')
   },
   watch: {
     todos: {
       handler() {
-        console.log('Todos changed!');
-        localStorage.setItem('todos', JSON.stringify(this.todos));
+       this.$store.dispatch('persist')
       },
       deep: true,
     },
   },
-}
+ }
 </script>
 
 

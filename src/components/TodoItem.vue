@@ -66,20 +66,7 @@ methods:{
      },
   
  },
-  mounted() {
-    console.log('App mounted!');
-    if (localStorage.getItem('todos')) this.todos = JSON.parse(localStorage.getItem('todos'));
-  },
-  watch: {
-    todos: {
-      handler() {
-        console.log('Todos changed!');
-        localStorage.setItem('todos', JSON.stringify(this.todos));
-      },
-      deep: true,
-    },
 
-  },
 }
 </script>
 
